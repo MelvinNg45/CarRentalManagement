@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using CarRentalManagement.Server.IRepository;
+using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CarRentalManagement.Server.Data;
-using CarRentalManagement.Shared.Domain;
-using CarRentalManagement.Server.IRepository;
 
 namespace CarRentalManagement.Server.Controllers
 {
@@ -40,8 +35,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetBookings()
         {
-            var Bookings = await _unitOfWork.Bookings.GetAll();
-            return Ok(Bookings);
+            var bookings = await _unitOfWork.Bookings.GetAll(includes: q => q.Include(x => x.Vehicle).Include(x => x.Customer));
+            return Ok(bookings);
         }
 
         // GET: api/Bookings/5
@@ -61,14 +56,14 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetBooking(int id)
         {
-            var Booking = await _unitOfWork.Bookings.Get(q => q.Id == id);
+            var bookings = await _unitOfWork.Bookings.Get(q => q.Id == id);
 
-            if (Booking == null)
+            if (bookings == null)
             {
                 return NotFound();
             }
 
-            return Ok(Booking);
+            return Ok(bookings);
         }
 
         // PUT: api/Bookings/5
@@ -103,14 +98,14 @@ namespace CarRentalManagement.Server.Controllers
             return NoContent();
         }
         */
-        public async Task<IActionResult> PutBooking(int id, Booking Booking)
+        public async Task<IActionResult> PutBooking(int id, Booking booking)
         {
-            if (id != Booking.Id)
+            if (id != booking.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Bookings.Update(Booking);
+            _unitOfWork.Bookings.Update(booking);
 
             try
             {
@@ -143,12 +138,12 @@ namespace CarRentalManagement.Server.Controllers
             return CreatedAtAction("GetBooking", new { id = Booking.Id }, Booking);
         }
         */
-        public async Task<ActionResult<Booking>> PostBooking(Booking Booking)
+        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
-            await _unitOfWork.Bookings.Insert(Booking);
+            await _unitOfWork.Bookings.Insert(booking);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetBooking", new { id = Booking.Id }, Booking);
+            return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
         }
 
         // DELETE: api/Bookings/5
@@ -170,8 +165,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> DeleteBooking(int id)
         {
-            var Booking = await _unitOfWork.Bookings.Get(q => q.Id == id);
-            if (Booking == null)
+            var booking = await _unitOfWork.Bookings.Get(q => q.Id == id);
+            if (booking == null)
             {
                 return NotFound();
             }
@@ -190,8 +185,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         private async Task<bool> BookingExists(int id)
         {
-            var Booking = await _unitOfWork.Bookings.Get(q => q.Id == id);
-            return Booking != null;
+            var booking = await _unitOfWork.Bookings.Get(q => q.Id == id);
+            return booking != null;
         }
     }
 }

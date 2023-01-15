@@ -1,13 +1,18 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">CarRentalManagement</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<div class="top-row pl-4 navbar navbar-dark">
+	<a class="navbar-brand" href="">CarRentalManagement</a>
+	<button class="navbar-toggler" @onclick="ToggleNavMenu">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
 	<ul class="nav flex-column">
-		@*<LoginDisplay />*@
 		<AuthorizeView>
 			<Authorized>
 				<li class="nav-item px-3">
@@ -15,8 +20,15 @@
 						<span class="oi oi-person" aria-hidden="true"></span> Hello, @context.User.Identity.Name!
 					</NavLink>
 				</li>
+				@*
 				<li class="nav-item px-3">
 					<NavLink class="nav-link" href="authentication/logout" Match="NavLinkMatch.All">
+						<span class="oi oi-account-logout" aria-hidden="true"></span> Log out
+					</NavLink>
+				</li>
+				*@
+				<li class="nav-item px-3">
+					<NavLink class="nav-link" href="#" @onclick="BeginSignOut" Match="NavLinkMatch.All">
 						<span class="oi oi-account-logout" aria-hidden="true"></span> Log out
 					</NavLink>
 				</li>
@@ -55,6 +67,21 @@
 			</NavLink>
 		</li>
 		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="customers">
+				<span class="oi oi-list-rich" aria-hidden="true"></span> Customers
+			</NavLink>
+		</li>
+		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="vehicles">
+				<span class="oi oi-list-rich" aria-hidden="true"></span> Vehicles
+			</NavLink>
+		</li>
+		<li class="nav-item px-3">
+			<NavLink class="nav-link" href="bookings">
+				<span class="oi oi-list-rich" aria-hidden="true"></span> Bookings
+			</NavLink>
+		</li>
+		<li class="nav-item px-3">
 			<NavLink class="nav-link" href="colours">
 				<span class="oi oi-list-rich" aria-hidden="true"></span> Colours
 			</NavLink>
@@ -68,12 +95,18 @@
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+	private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+	private void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
+
+	private async Task BeginSignOut(MouseEventArgs args)
+	{
+		await SignOutManager.SetSignOutState();
+		Navigation.NavigateTo("authentication/logout");
+	}
 }

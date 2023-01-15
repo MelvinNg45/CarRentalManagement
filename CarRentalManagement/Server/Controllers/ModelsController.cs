@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using CarRentalManagement.Server.IRepository;
+using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CarRentalManagement.Server.Data;
-using CarRentalManagement.Shared.Domain;
-using CarRentalManagement.Server.IRepository;
 
 namespace CarRentalManagement.Server.Controllers
 {
@@ -40,8 +35,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetModels()
         {
-            var Models = await _unitOfWork.Models.GetAll();
-            return Ok(Models);
+            var models = await _unitOfWork.Models.GetAll();
+            return Ok(models);
         }
 
         // GET: api/Models/5
@@ -61,14 +56,14 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetModel(int id)
         {
-            var Model = await _unitOfWork.Models.Get(q => q.Id == id);
+            var model = await _unitOfWork.Models.Get(q => q.Id == id);
 
-            if (Model == null)
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return Ok(Model);
+            return Ok(model);
         }
 
         // PUT: api/Models/5
@@ -103,14 +98,14 @@ namespace CarRentalManagement.Server.Controllers
             return NoContent();
         }
         */
-        public async Task<IActionResult> PutModel(int id, Model Model)
+        public async Task<IActionResult> PutModel(int id, Model model)
         {
-            if (id != Model.Id)
+            if (id != model.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Models.Update(Model);
+            _unitOfWork.Models.Update(model);
 
             try
             {
@@ -143,12 +138,12 @@ namespace CarRentalManagement.Server.Controllers
             return CreatedAtAction("GetModel", new { id = Model.Id }, Model);
         }
         */
-        public async Task<ActionResult<Model>> PostModel(Model Model)
+        public async Task<ActionResult<Model>> PostModel(Model model)
         {
-            await _unitOfWork.Models.Insert(Model);
+            await _unitOfWork.Models.Insert(model);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetModel", new { id = Model.Id }, Model);
+            return CreatedAtAction("GetModel", new { id = model.Id }, model);
         }
 
         // DELETE: api/Models/5
@@ -170,8 +165,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> DeleteModel(int id)
         {
-            var Model = await _unitOfWork.Models.Get(q => q.Id == id);
-            if (Model == null)
+            var model = await _unitOfWork.Models.Get(q => q.Id == id);
+            if (model == null)
             {
                 return NotFound();
             }
@@ -190,8 +185,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         private async Task<bool> ModelExists(int id)
         {
-            var Model = await _unitOfWork.Models.Get(q => q.Id == id);
-            return Model != null;
+            var model = await _unitOfWork.Models.Get(q => q.Id == id);
+            return model != null;
         }
     }
 }

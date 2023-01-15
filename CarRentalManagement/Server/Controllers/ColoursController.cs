@@ -40,12 +40,12 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetColours()
         {
-            var Colours = await _unitOfWork.Colours.GetAll();
-            return Ok(Colours);
+            //return NotFound();
+            var colour = await _unitOfWork.Colours.GetAll();
+            return Ok(colour);
         }
 
         // GET: api/Colours/5
-        [HttpGet("{id}")]
         /*
         public async Task<ActionResult<Colour>> GetColour(int id)
         {
@@ -59,16 +59,17 @@ namespace CarRentalManagement.Server.Controllers
             return Colour;
         }
         */
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetColour(int id)
         {
-            var Colour = await _unitOfWork.Colours.Get(q => q.Id == id);
+            var colour = await _unitOfWork.Colours.Get(q => q.Id == id);
 
-            if (Colour == null)
+            if (colour == null)
             {
                 return NotFound();
             }
 
-            return Ok(Colour);
+            return Ok(colour);
         }
 
         // PUT: api/Colours/5
@@ -103,14 +104,14 @@ namespace CarRentalManagement.Server.Controllers
             return NoContent();
         }
         */
-        public async Task<IActionResult> PutColour(int id, Colour Colour)
+        public async Task<IActionResult> PutColour(int id, Colour colour)
         {
-            if (id != Colour.Id)
+            if (id != colour.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Colours.Update(Colour);
+            _unitOfWork.Colours.Update(colour);
 
             try
             {
@@ -143,12 +144,12 @@ namespace CarRentalManagement.Server.Controllers
             return CreatedAtAction("GetColour", new { id = Colour.Id }, Colour);
         }
         */
-        public async Task<ActionResult<Colour>> PostColour(Colour Colour)
+        public async Task<ActionResult<Colour>> PostColour(Colour colour)
         {
-            await _unitOfWork.Colours.Insert(Colour);
+            await _unitOfWork.Colours.Insert(colour);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetColour", new { id = Colour.Id }, Colour);
+            return CreatedAtAction("GetColour", new { id = colour.Id }, colour);
         }
 
         // DELETE: api/Colours/5
@@ -170,8 +171,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> DeleteColour(int id)
         {
-            var Colour = await _unitOfWork.Colours.Get(q => q.Id == id);
-            if (Colour == null)
+            var colour = await _unitOfWork.Colours.Get(q => q.Id == id);
+            if (colour == null)
             {
                 return NotFound();
             }
@@ -190,8 +191,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         private async Task<bool> ColourExists(int id)
         {
-            var Colour = await _unitOfWork.Colours.Get(q => q.Id == id);
-            return Colour != null;
+            var colour = await _unitOfWork.Colours.Get(q => q.Id == id);
+            return colour != null;
         }
     }
 }

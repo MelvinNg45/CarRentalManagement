@@ -3,7 +3,17 @@
 @inject IJSRuntime js
 @attribute [Authorize]
 
-<h3 class="card-title">Car Colours</h3> 
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<h3 class="card-title">Car Colours</h3>
+<br />
+<a href="/colours/create" class="btn btn-secondary">
+	<span class="oi oi-plus"></span>
+	Create New Colour
+</a>
+<br />
+<br />
 
 @if (Colours == null)
 {
@@ -12,22 +22,22 @@
 else
 {
 	<table class="table table-responsive">
-		<thread>
+		<thead>
 			<tr>
 				<th>Name</th>
 				<th>Actions</th>
 			</tr>
-		</thread>
+		</thead>
 		<tbody>
 			@foreach (var colour in Colours)
 			{
 				<tr>
 					<td>@colour.Name</td>
 					<td>
-						<a href="/makes/view/@colour.Id" class="btn btn-primary">
+						<a href="/colours/view/@colour.Id" class="btn btn-primary">
 							<span class="oi oi-book"></span>
 						</a>
-						<a href="/makes/edit/@colour.Id" class="btn btn-warning">
+						<a href="/colours/edit/@colour.Id" class="btn btn-warning">
 							<span class="oi oi-pencil"></span>
 						</a>
 						<button class="btn btn-danger" @onclick="@(() => Delete(colour.Id))">
@@ -40,13 +50,12 @@ else
 	</table>
 }
 
-<br />
-
 @code{
 	private List<Colour> Colours;
 
 	protected async override Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		Colours = await _client.GetFromJsonAsync<List<Colour>>($"{Endpoints.ColoursEndpoint}");
 	}
 
@@ -60,5 +69,8 @@ else
 			await OnInitializedAsync();
 		}
 	}
+
+	public void Dispose() {
+		_interceptor.DisposeEvent();
+	}
 }
- 

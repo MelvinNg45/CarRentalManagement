@@ -40,8 +40,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetCustomers()
         {
-            var Customers = await _unitOfWork.Customers.GetAll();
-            return Ok(Customers);
+            var customers = await _unitOfWork.Customers.GetAll();
+            return Ok(customers);
         }
 
         // GET: api/Customers/5
@@ -61,14 +61,14 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetCustomer(int id)
         {
-            var Customer = await _unitOfWork.Customers.Get(q => q.Id == id);
+            var customer = await _unitOfWork.Customers.Get(q => q.Id == id);
 
-            if (Customer == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return Ok(Customer);
+            return Ok(customer);
         }
 
         // PUT: api/Customers/5
@@ -103,14 +103,14 @@ namespace CarRentalManagement.Server.Controllers
             return NoContent();
         }
         */
-        public async Task<IActionResult> PutCustomer(int id, Customer Customer)
+        public async Task<IActionResult> PutCustomer(int id, Customer customer)
         {
-            if (id != Customer.Id)
+            if (id != customer.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Customers.Update(Customer);
+            _unitOfWork.Customers.Update(customer);
 
             try
             {
@@ -143,12 +143,12 @@ namespace CarRentalManagement.Server.Controllers
             return CreatedAtAction("GetCustomer", new { id = Customer.Id }, Customer);
         }
         */
-        public async Task<ActionResult<Customer>> PostCustomer(Customer Customer)
+        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            await _unitOfWork.Customers.Insert(Customer);
+            await _unitOfWork.Customers.Insert(customer);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetCustomer", new { id = Customer.Id }, Customer);
+            return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }
 
         // DELETE: api/Customers/5
@@ -170,8 +170,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> DeleteCustomer(int id)
         {
-            var Customer = await _unitOfWork.Customers.Get(q => q.Id == id);
-            if (Customer == null)
+            var customer = await _unitOfWork.Customers.Get(q => q.Id == id);
+            if (customer == null)
             {
                 return NotFound();
             }
@@ -190,8 +190,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         private async Task<bool> CustomerExists(int id)
         {
-            var Customer = await _unitOfWork.Customers.Get(q => q.Id == id);
-            return Customer != null;
+            var customer = await _unitOfWork.Customers.Get(q => q.Id == id);
+            return customer != null;
         }
     }
 }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using CarRentalManagement.Server.IRepository;
+using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CarRentalManagement.Server.Data;
-using CarRentalManagement.Shared.Domain;
-using CarRentalManagement.Server.IRepository;
 
 namespace CarRentalManagement.Server.Controllers
 {
@@ -40,8 +35,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetVehicles()
         {
-            var Vehicles = await _unitOfWork.Vehicles.GetAll();
-            return Ok(Vehicles);
+            var vehicle = await _unitOfWork.Vehicles.GetAll(includes: q => q.Include(x => x.Make).Include(x => x.Model).Include(x => x.Colour));
+            return Ok(vehicle);
         }
 
         // GET: api/Vehicles/5
@@ -61,14 +56,14 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> GetVehicle(int id)
         {
-            var Vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
+            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
 
-            if (Vehicle == null)
+            if (vehicle == null)
             {
                 return NotFound();
             }
 
-            return Ok(Vehicle);
+            return Ok(vehicle);
         }
 
         // PUT: api/Vehicles/5
@@ -103,14 +98,14 @@ namespace CarRentalManagement.Server.Controllers
             return NoContent();
         }
         */
-        public async Task<IActionResult> PutVehicle(int id, Vehicle Vehicle)
+        public async Task<IActionResult> PutVehicle(int id, Vehicle vehicle)
         {
-            if (id != Vehicle.Id)
+            if (id != vehicle.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Vehicles.Update(Vehicle);
+            _unitOfWork.Vehicles.Update(vehicle);
 
             try
             {
@@ -143,12 +138,12 @@ namespace CarRentalManagement.Server.Controllers
             return CreatedAtAction("GetVehicle", new { id = Vehicle.Id }, Vehicle);
         }
         */
-        public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle Vehicle)
+        public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
-            await _unitOfWork.Vehicles.Insert(Vehicle);
+            await _unitOfWork.Vehicles.Insert(vehicle);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetVehicle", new { id = Vehicle.Id }, Vehicle);
+            return CreatedAtAction("GetVehicle", new { id = vehicle.Id }, vehicle);
         }
 
         // DELETE: api/Vehicles/5
@@ -170,8 +165,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         public async Task<IActionResult> DeleteVehicle(int id)
         {
-            var Vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
-            if (Vehicle == null)
+            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
+            if (vehicle == null)
             {
                 return NotFound();
             }
@@ -190,8 +185,8 @@ namespace CarRentalManagement.Server.Controllers
         */
         private async Task<bool> VehicleExists(int id)
         {
-            var Vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
-            return Vehicle != null;
+            var vehicle = await _unitOfWork.Vehicles.Get(q => q.Id == id);
+            return vehicle != null;
         }
     }
 }
